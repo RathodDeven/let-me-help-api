@@ -80,11 +80,12 @@ const resolvers = {
       const users = await User.find({ pushToken: { $exists: true } })
 
       // get all unique pushTokens from users
-      const pushTokens = [...new Set(users.map((user) => user.pushToken))]
+      const pushTokens = [...new Set(users.map((user) => user?.pushToken))]
 
       // send notiifcation using expo-server-sdk
       const messages = []
       for (const pushToken of pushTokens) {
+        if (!pushToken) continue
         if (!Expo.isExpoPushToken(pushToken)) {
           console.error(
             `Push token ${pushToken} is not a valid Expo push token`
@@ -126,25 +127,27 @@ const resolvers = {
 
       // send notiifcation using expo-server-sdk
 
-      if (!Expo.isExpoPushToken(owner.pushToken)) {
-        console.error(
-          `Push token ${owner.pushToken} is not a valid Expo push token`
-        )
-        return await volunteerTask.save()
-      }
+      if (owner?.pushToken) {
+        if (!Expo.isExpoPushToken(owner.pushToken)) {
+          console.error(
+            `Push token ${owner.pushToken} is not a valid Expo push token`
+          )
+          return await volunteerTask.save()
+        }
 
-      const message = {
-        to: owner.pushToken,
-        sound: 'default',
-        body: `${user.username} has volunteered for ${volunteerTask.name}`,
-        data: volunteerTask
-      }
+        const message = {
+          to: owner.pushToken,
+          sound: 'default',
+          body: `${user.username} has volunteered for ${volunteerTask.name}`,
+          data: volunteerTask
+        }
 
-      try {
-        const receipt = await expo.sendPushNotificationsAsync(message)
-        console.log(receipt)
-      } catch (error) {
-        console.error(error)
+        try {
+          const receipt = await expo.sendPushNotificationsAsync(message)
+          console.log(receipt)
+        } catch (error) {
+          console.error(error)
+        }
       }
 
       return await volunteerTask.save()
