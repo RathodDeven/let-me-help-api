@@ -40,6 +40,7 @@ const typeDefs = gql`
   input VolunteerTaskWhere {
     _id: ID
     owner: ID
+    attendingUserId: ID
   }
 
   enum Order {

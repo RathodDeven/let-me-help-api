@@ -28,6 +28,12 @@ const resolvers = {
           [sort.field]: sort.order === 'ASC' ? 1 : -1
         })
       }
+
+      if (where.attendingUserId) {
+        return await VolunteerTask.find({
+          volunteers: { $in: [where.attendingUserId] }
+        })
+      }
       return await VolunteerTask.find(where)
     },
     volunteerTask: async (_, { where }) => {
