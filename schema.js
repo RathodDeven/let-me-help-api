@@ -55,12 +55,13 @@ const typeDefs = gql`
 
   type Query {
     users: [User]
+    user(AuthPayLoad: AuthPayLoad): User
     volunteerTasks(where: VolunteerTaskWhere, sort: AnySort): [VolunteerTask]
     volunteerTask(where: VolunteerTaskWhere): VolunteerTask
   }
 
   type Mutation {
-    createUser(AuthPayLoad: AuthPayLoad, email: String): User
+    createUser(AuthPayLoad: AuthPayLoad, email: String, pushToken: String): User
     createVolunteerTask(
       AuthPayLoad: AuthPayLoad
       VolunteerTaskPayLoad: VolunteerTaskPayLoad
