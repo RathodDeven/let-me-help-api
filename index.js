@@ -13,7 +13,7 @@ const app = express()
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true // Enable Apollo Explorer
+  introspection: true
 })
 
 // Start the server
