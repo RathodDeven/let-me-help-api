@@ -6,6 +6,7 @@ const VolunteerTaskSchema = new mongoose.Schema(
     description: String,
     location: String,
     duration: String,
+    dateTiem: String,
     images: [String],
     volunteers: [
       {
