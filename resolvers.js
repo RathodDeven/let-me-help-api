@@ -1,6 +1,5 @@
 // resolvers.js
 const { verify } = require('./controllers/auth')
-const { addNewUser } = require('./controllers/auth')
 const User = require('./models/User') // Assuming you have a User model
 const VolunteerTask = require('./models/VolunteerTask')
 const { Expo } = require('expo-server-sdk')
@@ -48,12 +47,24 @@ const resolvers = {
   },
   Mutation: {
     createUser: async (_, { AuthPayLoad, email, pushToken }) => {
-      return await addNewUser({
-        username: AuthPayLoad.username,
-        password: AuthPayLoad.password,
+      const username = AuthPayLoad.username
+      const password = AuthPayLoad.password
+      const existingUser = await User.findOne({
+        username: AuthPayLoad.username
+      })
+
+      if (existingUser) {
+        throw new Error('Username already exists')
+      }
+
+      const newUser = new User({
+        username,
+        password,
         email,
         pushToken
       })
+
+      return await newUser.save()
     },
     createVolunteerTask: async (_, { AuthPayLoad, VolunteerTaskPayLoad }) => {
       const user = await verify(AuthPayLoad)
